@@ -1,0 +1,21 @@
+{
+  "name": "dice-online-video",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.14"
+  },
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "randomstring": "^1.2.1",
+    "telegraf": "3.39"
+  }
+}
