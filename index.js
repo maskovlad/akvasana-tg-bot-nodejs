@@ -5,7 +5,7 @@ const token = process.env.BOT_TOKEN
 const bot = new Telegraf(token)
 const users = []
 
-const stage = new Stage([require('./scenes/calc.scene')])
+const stage = new Stage([require('./scenes/order.scene')])
 bot.use(session())
 bot.use(stage.middleware())
 bot.context.users = users
