@@ -11,9 +11,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^2.0.14"
+    "nodemon": "^2.0.14",
+    "prisma": "^4.13.0"
   },
   "dependencies": {
+    "@prisma/client": "^4.13.0",
     "dotenv": "^10.0.0",
     "randomstring": "^1.2.1",
     "telegraf": "3.39"

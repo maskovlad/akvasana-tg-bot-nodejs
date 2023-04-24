@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AkvasanaAccessory {
+  id    Int    @id @default(autoincrement())
+  item  String
+  title String
+  cost  Int
+}
+
+model AkvasanaAppContacts {
+  id      Int    @id @default(autoincrement())
+  name    String
+  value   String
+  title   String
+  display String
+}
+
+model AkvasanaOptions {
+  id    Int    @id @default(autoincrement())
+  name  String
+  value String
+}
+
+model AkvasanaOrders {
+  id         Int      @id @default(autoincrement())
+  app        String
+  createdAt  DateTime @default(now()) @db.Timestamp(6)
+  regionName String
+  address    String
+  phone      String
+  isClient   String
+  bottle     String
+  pomp       String
+  qty        Int
+  total      Int
+}
+
+model AkvasanaRegions {
+  id         Int    @id
+  regionName String
+  minQty     Int
+  cost       Int
+  cost1      Int
+  delivery   String
+}
+
+model ChobotarPrice {
+  id            Int     @id @default(autoincrement())
+  ukDescription String
+  ruDescription String
+  image         String  @default("/assets/placeholder.jpg")
+  price         Int
+  published     Boolean @default(true)
+  icon          String  @default("/assets/prof_icons/01.svg")
+  ruTitle       String
+  ukTitle       String
+}
+
+model ChobotarWork {
+  id            Int     @id @default(autoincrement())
+  ukTitle       String  @default("Ще одна робота")
+  ruTitle       String  @default("Еще одна работа")
+  ukDescription String  @default("Без коментарів")
+  ruDescription String  @default("Без комментариев")
+  block         Boolean @default(false)
+  published     Boolean @default(false)
+  imageAfter    String  @default("/assets/placeholder.jpg")
+  imageBefore   String  @default("/assets/placeholder.jpg")
+}
+
+model Rating {
+  id          Int           @id @default(autoincrement())
+  character   String        @unique
+  image       String
+  Testimonial Testimonial[]
+}
+
+model Testimonial {
+  id              Int      @id @default(autoincrement())
+  name            String
+  email           String?
+  text            String
+  createdAt       DateTime @default(now()) @db.Timestamp(6)
+  ratingCharacter String?
+  published       Boolean  @default(false)
+  Rating          Rating?  @relation(fields: [ratingCharacter], references: [character])
+}
