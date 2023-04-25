@@ -1,6 +1,7 @@
 const { Markup } = require("telegraf");
 const WizardScene = require("telegraf/scenes/wizard");
 const prisma = require('../lib/prisma')
+const sendOrderEmail = require('../lib/sendOrderEmail')
 
 module.exports = orderScene = new WizardScene(
   "order",
@@ -31,7 +32,7 @@ module.exports = orderScene = new WizardScene(
         (o) => o.regionName === ctx.update.message.text
       );
 
-      ctx.session.orderData.sum = ctx.session.selectedRegion.cost;
+      ctx.session.orderData.total = ctx.session.selectedRegion.cost;
 
       ctx.session.orderData.region = ctx.update.message.text;
       await ctx.replyWithHTML(
@@ -48,13 +49,14 @@ module.exports = orderScene = new WizardScene(
   // телефон
   async (ctx) => {
     try {
-      ctx.session.orderData.adress = ctx.update.message.text;
+      ctx.session.orderData.address = ctx.update.message.text;
       await ctx.replyWithHTML("<b>Введіть ваш телефон</b>");
       return ctx.wizard.next();
     } catch (e) {
       console.error("Помилка при вводі телефону", e);
     }
   },
+  // чи клієнт
   async (ctx) => {
     try {
       ctx.session.orderData.phone = ctx.update.message.text;
@@ -106,9 +108,9 @@ module.exports = orderScene = new WizardScene(
         await prisma.akvasanaAccessory.findMany();
 
       await ctx.replyWithHTML(
-        `💰${(ctx.session.orderData.sum =
+        `💰${(ctx.session.orderData.total =
           ctx.session.orderData.qty *
-          ctx.session.orderData.sum)}грн<b>\nЧи потрібна вам тара?</b>\n<i>(${
+          ctx.session.orderData.total)}грн<b>\nЧи потрібна вам тара?</b>\n<i>(${
           ctx.session.selectedRegion.accessory[0]?.cost
         } грн/бутель)</i>`,
         Markup.keyboard([["Так", "Ні"]])
@@ -125,8 +127,8 @@ module.exports = orderScene = new WizardScene(
     try {
       ctx.session.orderData.bottle = ctx.update.message.text;
       await ctx.replyWithHTML(
-        `💰${(ctx.session.orderData.sum =
-          ctx.session.orderData.sum +
+        `💰${(ctx.session.orderData.total =
+          ctx.session.orderData.total +
           ctx.session.orderData.qty *
             (ctx.session.orderData.bottle === "Так"
               ? ctx.session.selectedRegion.accessory[0]?.cost
@@ -148,8 +150,8 @@ module.exports = orderScene = new WizardScene(
     try {
       ctx.session.orderData.pomp = ctx.update.message.text;
       await ctx.replyWithHTML(
-        `💰${(ctx.session.orderData.sum =
-          ctx.session.orderData.sum +
+        `💰${(ctx.session.orderData.total =
+          ctx.session.orderData.total +
           (ctx.session.orderData.pomp === "Так"
             ? ctx.session.selectedRegion.accessory[1]?.cost
             : 0))}грн\n<b>Підтвердіть замовлення.</b>`,
@@ -174,6 +176,8 @@ module.exports = orderScene = new WizardScene(
         );
         return ctx.scene.leave();
       }
+
+      sendOrderEmail(ctx.session.orderData);
 
       // write to DB & send email
       await ctx.reply(
