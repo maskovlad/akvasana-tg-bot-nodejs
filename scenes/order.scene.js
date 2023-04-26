@@ -1,7 +1,8 @@
 const { Markup } = require("telegraf");
 const WizardScene = require("telegraf/scenes/wizard");
 const prisma = require('../lib/prisma')
-const sendOrderEmail = require('../lib/sendOrderEmail')
+const sendOrderEmail = require("../lib/sendOrderEmail");
+const addOrderToDB = require("../lib/addOrderToDB");
 
 module.exports = orderScene = new WizardScene(
   "order",
@@ -34,7 +35,7 @@ module.exports = orderScene = new WizardScene(
 
       ctx.session.orderData.total = ctx.session.selectedRegion.cost;
 
-      ctx.session.orderData.region = ctx.update.message.text;
+      ctx.session.orderData.regionName = ctx.update.message.text;
       await ctx.replyWithHTML(
         `<i>Вартість доставки одного бутля 19,5л до вашого району становить</i> ${ctx.session.selectedRegion.cost}грн. <i>Мінімальний заказ, бутлів - ${ctx.session.selectedRegion.minQty} шт</i>\n<b>Введіть вашу адресу</b>`,
         {
@@ -102,7 +103,7 @@ module.exports = orderScene = new WizardScene(
   // тара
   async (ctx) => {
     try {
-      ctx.session.orderData.qty = ctx.update.message.text;
+      ctx.session.orderData.qty = +ctx.update.message.text;
 
       ctx.session.selectedRegion.accessory =
         await prisma.akvasanaAccessory.findMany();
@@ -160,7 +161,8 @@ module.exports = orderScene = new WizardScene(
           .resize()
           .extra()
       );
-      console.log(ctx.session.orderData);
+      ctx.session.orderData.app = "TELEGRAM";
+
       return ctx.wizard.next();
     } catch (e) {
       console.error("Помилка при підтвердженні", e);
@@ -178,8 +180,8 @@ module.exports = orderScene = new WizardScene(
       }
 
       sendOrderEmail(ctx.session.orderData);
+      addOrderToDB(ctx.session.orderData);
 
-      // write to DB & send email
       await ctx.reply(
         `Дякуємо за замовлення. Незабаром ми зв\'яжемося з вами. Слава ЗСУ!`
       );

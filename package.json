@@ -1,7 +1,7 @@
 {
-  "name": "dice-online-video",
+  "name": "akvasana-tg-bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "Замовлення води Аква Сана через бота Telegram",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
