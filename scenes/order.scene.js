@@ -32,7 +32,7 @@ module.exports = orderScene = new WizardScene(
       ctx.session.selectedRegion = ctx.session.regionsData.find(
         (o) => o.regionName === ctx.update.message.text
       );
-
+console.log('selected region : ',ctx.session.selectedRegion);
       ctx.session.orderData.total = ctx.session.selectedRegion.cost;
 
       ctx.session.orderData.regionName = ctx.update.message.text;
