@@ -8,6 +8,7 @@ module.exports = orderScene = new WizardScene(
   "order",
   // район
   async (ctx) => {
+    console.log('Bot started!!!')
     try {
       ctx.session.regionsData = await prisma.akvasanaRegions.findMany({
         where: { minQty: { not: 0 } },
