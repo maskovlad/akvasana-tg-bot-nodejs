@@ -182,8 +182,8 @@ module.exports = orderScene = new WizardScene(
 
       console.log({orderData:ctx.session.orderData})
 
-      sendOrderEmail(ctx.session.orderData);
       addOrderToDB(ctx.session.orderData);
+      sendOrderEmail(ctx.session.orderData);
 
       await ctx.reply(
         `Дякуємо за замовлення. Незабаром ми зв\'яжемося з вами. Слава ЗСУ!`
