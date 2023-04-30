@@ -16,8 +16,6 @@ module.exports = orderScene = new WizardScene(
         (region) => region.regionName
       );
 
-      console.log({ regionsData: ctx.session.regionsData });
-
       ctx.session.orderData = {};
       await ctx.replyWithHTML(
         "<b>Виберіть ваш район</b>",
@@ -35,8 +33,6 @@ module.exports = orderScene = new WizardScene(
       ctx.session.selectedRegion = ctx.session.regionsData.find(
         (o) => o.regionName === ctx.update.message.text
       );
-
-      console.log({selectedRegion: ctx.session.selectedRegion});
 
       ctx.session.orderData.total = ctx.session.selectedRegion?.cost;
 
