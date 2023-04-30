@@ -9,7 +9,6 @@ bot.use(session())
 bot.use(stage.middleware())
 
 bot.use(require('./composers/start.composer'))
-bot.use(require('./composers/utils.composer'))
 
 // bot.launch().then(() => {
 // 	console.log(`bot started on @${bot.options.username}`)

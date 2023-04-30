@@ -15,6 +15,9 @@ module.exports = orderScene = new WizardScene(
       const regions = ctx.session.regionsData.map(
         (region) => region.regionName
       );
+
+      console.log({ regionsData: ctx.session.regionsData });
+
       ctx.session.orderData = {};
       await ctx.replyWithHTML(
         "<b>Виберіть ваш район</b>",
@@ -32,8 +35,10 @@ module.exports = orderScene = new WizardScene(
       ctx.session.selectedRegion = ctx.session.regionsData.find(
         (o) => o.regionName === ctx.update.message.text
       );
-console.log('selected region : ',ctx.session.selectedRegion);
-      ctx.session.orderData.total = ctx.session.selectedRegion.cost;
+
+      console.log({selectedRegion: ctx.session.selectedRegion});
+
+      ctx.session.orderData.total = ctx.session.selectedRegion?.cost;
 
       ctx.session.orderData.regionName = ctx.update.message.text;
       await ctx.replyWithHTML(
@@ -178,6 +183,8 @@ console.log('selected region : ',ctx.session.selectedRegion);
         );
         return ctx.scene.leave();
       }
+
+      console.log({orderData:ctx.session.orderData})
 
       sendOrderEmail(ctx.session.orderData);
       addOrderToDB(ctx.session.orderData);
