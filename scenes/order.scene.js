@@ -183,8 +183,14 @@ module.exports = orderScene = new WizardScene(
 
       console.log({orderData:ctx.session.orderData})
 
-      addOrderToDB(ctx.session.orderData);
-      sendOrderEmail(ctx.session.orderData);
+      // addOrderToDB(ctx.session.orderData);
+      // sendOrderEmail(ctx.session.orderData);
+
+      const addedOrder = await prisma.akvasanaOrders.create({
+        data: ctx.session.orderData,
+      });
+
+      console.log({addedOrder})
 
       await ctx.reply(
         `Дякуємо за замовлення. Незабаром ми зв\'яжемося з вами. Слава ЗСУ!`
