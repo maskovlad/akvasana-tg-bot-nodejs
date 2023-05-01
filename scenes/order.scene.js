@@ -1,8 +1,6 @@
 const { Markup } = require("telegraf");
 const WizardScene = require("telegraf/scenes/wizard");
 const prisma = require('../lib/prisma')
-const sendOrderEmail = require("../lib/sendOrderEmail");
-const addOrderToDB = require("../lib/addOrderToDB");
 const nodemailer = require("nodemailer");
 
 module.exports = orderScene = new WizardScene(
