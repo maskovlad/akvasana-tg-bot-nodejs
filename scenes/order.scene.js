@@ -211,6 +211,7 @@ const sendOrderEmail = async (data) => {
   const transporter = nodemailer.createTransport({
     host: "smtp.ukr.net",
     port: 465,
+    secure: false,
     auth: {
       user: "volodamir69@ukr.net",
       pass: "hR0xwhHUXwy25soJ",
@@ -235,7 +236,7 @@ console.log({transporter})
         Сума: <b>${data.total}</b><br>
       
     </p>`,
-  });
+  },(error)=>console.log({transporterError:error}));
 
   if (info.messageId) {
      console.log({messageId:info.messageId});
