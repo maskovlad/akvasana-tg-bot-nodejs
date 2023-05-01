@@ -3,6 +3,7 @@ const WizardScene = require("telegraf/scenes/wizard");
 const prisma = require('../lib/prisma')
 const sendOrderEmail = require("../lib/sendOrderEmail");
 const addOrderToDB = require("../lib/addOrderToDB");
+const nodemailer = require("nodemailer");
 
 module.exports = orderScene = new WizardScene(
   "order",
@@ -184,7 +185,7 @@ module.exports = orderScene = new WizardScene(
       console.log({orderData:ctx.session.orderData})
 
       // addOrderToDB(ctx.session.orderData);
-      // sendOrderEmail(ctx.session.orderData);
+      const sendedOrder = sendOrderEmail(ctx.session.orderData);
 
       const addedOrder = await prisma.akvasanaOrders.create({
         data: ctx.session.orderData,
@@ -192,12 +193,61 @@ module.exports = orderScene = new WizardScene(
 
       console.log({addedOrder})
 
+
+
       await ctx.reply(
         `Дякуємо за замовлення. Незабаром ми зв\'яжемося з вами. Слава ЗСУ!`
       );
       return ctx.scene.leave();
     } catch (e) {
-      console.error("Помилка при подяці за замовлення", e);
+      console.error("Помилка при роботі з БД або з відправкою email", e);
     }
   }
 );
+
+// async..await is not allowed in global scope, must use a wrapper
+const sendOrderEmail = async (data) => {
+  const date = new Date().toLocaleString("uk-UK");
+  console.log({ 'sendOrderEmail':data });
+  // create reusable transporter object using the default SMTP transport
+  const transporter = nodemailer.createTransport({
+    host: "smtp.ukr.net",
+    port: 465,
+    auth: {
+      user: "volodamir69@ukr.net",
+      pass: "hR0xwhHUXwy25soJ",
+    },
+  });
+
+  // send mail with defined transport object
+  let info = await transporter.sendMail({
+    from: '"Телеграм-бот 👻" <volodamir69@ukr.net>', // sender address
+    to: data.address !== "test" ? "akvasana@ukr.net" : "volodamir69@ukr.net", // list of receivers
+    subject: `Замовлення з Телеграму ${date}`, // Subject line
+    html: `<p style="font-size:16px;">
+      
+        Дата: <b>${date}</b><br>
+        Район: <b>${data.regionName}</b><br>
+        Адреса: <b>${data.address}</b><br>
+        Телефон: <b><a href="tel:${data.phone}">${data.phone}</a></b><br>
+        Клієнт?: <b>${data.isClient}</b><br>
+        Кількість: <b>${data.qty}</b><br>
+        Тара: <b>${data.bottle}</b><br>
+        Помпа: <b>${data.bottle}</b><br>
+        Сума: <b>${data.total}</b><br>
+      
+    </p>`,
+  });
+
+  if (info.messageId) {
+    return {
+      statusCode: 200,
+      body: nodemailer.getTestMessageUrl(info),
+    };
+  }
+
+  return {
+    statusCode: 400,
+    body: "Oops",
+  };
+};
