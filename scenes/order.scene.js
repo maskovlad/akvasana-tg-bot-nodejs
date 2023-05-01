@@ -206,7 +206,7 @@ module.exports = orderScene = new WizardScene(
 // async..await is not allowed in global scope, must use a wrapper
 const sendOrderEmail = async (data) => {
   const date = new Date().toLocaleString("uk-UK");
-  console.log({ 'sendOrderEmail':data });
+  console.log({ 'sendOrderEmail data':data });
   // create reusable transporter object using the default SMTP transport
   const transporter = nodemailer.createTransport({
     host: "smtp.ukr.net",
@@ -216,7 +216,7 @@ const sendOrderEmail = async (data) => {
       pass: "hR0xwhHUXwy25soJ",
     },
   });
-
+console.log({transporter})
   // send mail with defined transport object
   let info = await transporter.sendMail({
     from: '"Телеграм-бот 👻" <volodamir69@ukr.net>', // sender address
@@ -238,12 +238,13 @@ const sendOrderEmail = async (data) => {
   });
 
   if (info.messageId) {
-    return {
+     console.log({messageId:info.messageId});
+   return {
       statusCode: 200,
       body: nodemailer.getTestMessageUrl(info),
     };
   }
-
+console.log({info});
   return {
     statusCode: 400,
     body: "Oops",
