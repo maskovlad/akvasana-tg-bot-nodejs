@@ -236,7 +236,7 @@ console.log({transporter})
         Сума: <b>${data.total}</b><br>
       
     </p>`,
-  },(error)=>console.log({transporterError:error}));
+  });
 
   if (info.messageId) {
      console.log({messageId:info.messageId});
